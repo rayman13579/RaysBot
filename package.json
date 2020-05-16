@@ -1,0 +1,19 @@
+{
+  "name": "raysbot",
+  "version": "1.0.0",
+  "description": "Simple Telegram Bot with multiple funny commands",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rayman13579/RaysBot.git"
+  },
+  "author": "rayman13579",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rayman13579/RaysBot/issues"
+  },
+  "homepage": "https://github.com/rayman13579/RaysBot#readme"
+}

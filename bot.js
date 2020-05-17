@@ -195,22 +195,34 @@ bot.command('timeout', async (ctx) => {
 bot.command('timeoutbeni', async (ctx) => timeOut(ctx, 129383764, 60000));
 
 bot.command('showusers', async (ctx) => {
-    let table = '';
+    if (ctx.from.id === 130140212) {
+        ctx.deleteMessage(ctx.message.message_id);
 
-    (await db.find()).forEach(user => {
-        table += `${user.id}  ${user.userName}  ${user.firstName}  ${user.lastName}\n`;
-    });
+        let table = '';
 
-    ctx.reply(table);
+        (await db.find()).forEach(user => {
+            table += `${user.id}  ${user.userName}  ${user.firstName}  ${user.lastName}\n`;
+        });
+
+        ctx.telegram.sendMessage(ctx.from.id, table);
+    }
 });
 bot.command('everyone', async (ctx) => {
-    let reply = '';
+    let admins = [];
 
-    for (const user of (await db.find())) {
-        reply += '@' + ((await ctx.getChatMember(user.id)).user.username) + '\n';
+    (await ctx.getChatAdministrators()).forEach(user => admins.push(user.user.id));
+
+    if (admins.includes(ctx.from.id)) {
+        ctx.deleteMessage(ctx.message.message_id);
+
+        let reply = '';
+
+        for (const user of (await db.find())) {
+            reply += '@' + ((await ctx.getChatMember(user.id).then(user => user.user.username).catch(err => console.log(err.description)))) + '\n';
+        }
+
+        ctx.reply(reply.replace(new RegExp('@undefined', 'g'), ''));
     }
-
-    await ctx.reply(reply);
 });
 
 bot.launch();
@@ -230,5 +242,5 @@ var timeOut = async (ctx, user, time) => {
     };
     ctx.reply((await ctx.restrictChatMember(user).catch(reason => reason.description)) === 'Bad Request: can\'t remove chat owner' ? 'Can\'t time an admin out' : 'Successfully timed out');
     await wait(time);
-    await ctx.restrictChatMember(user, reset).catch(reason => '');
+    await ctx.restrictChatMember(user, reset).catch(err => console.log(err.description));
 }

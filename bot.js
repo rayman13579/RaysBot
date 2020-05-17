@@ -1,14 +1,16 @@
 require('dotenv').config();
 const Telegraf = require('telegraf');
+const db = require('./db.js');
 
 const bot = new Telegraf(process.env.TOKEN);
 
 bot.use(async (ctx, next) => {
-    const start = new Date();
+    let start = new Date();
     await next();
-    const ms = new Date() - start;
-    console.log('%s > %s < %sms', start, ctx.message.text, ms);
-})
+    let ms = new Date() - start;
+    let niceDate = start.getDate() + '.' + (start.getMonth() + 1) + '.' + start.getFullYear() + ' ' + start.getHours() + ':' + start.getMinutes() + ':' + start.getSeconds();
+    console.log('%s > %s < %sms', niceDate, ctx.message.text, ms);
+});
 
 bot.use((ctx, next) => {
     if (ctx.updateType === 'message' && ctx.updateSubTypes.includes('text')) {
@@ -18,7 +20,13 @@ bot.use((ctx, next) => {
         ctx.state.args = args;
     }
     next();
-})
+});
+
+bot.use(async (ctx, next) => {
+    await db.connect();
+    await db.insert(ctx.from.id, ctx.from.username, ctx.from.first_name, ctx.from.last_name);
+    next();
+});
 
 bot.start((ctx) => ctx.reply('Yo \\o/ \n check out /help'));
 bot.help((ctx) => ctx.reply('Available Commands: \n' +
@@ -49,13 +57,8 @@ bot.help((ctx) => ctx.reply('Available Commands: \n' +
                                                         '   /everyone \n' +
                                                         '   /seppuku \n' +
                                                         '   /timeout <username> <time in minutes> \n' +
-                                                     '   /timeoutbeni (time out BenBan for 1 min) \n' +
+                                                        '   /timeoutbeni (time out BenBan for 1 min) \n' +
                                                         '   /showusers (only doable by me \uD83D\uDE0B) \n' +
-                                                        '\n' +
-                                                        'Removed commands (no more school YaY \\o/):\n' +
-                                                        '   /addtest <date> <subject> <teacher> <topic> \n' +
-                                                        '   /removetest <date> <teacher> \n' +
-                                                        '   /showtests \n' +
                                                         '\n' +
                                                         'Stay tuned for more updates ^^'
 ));
@@ -71,8 +74,6 @@ bot.command('uwantsumfuk', (ctx) => ctx.reply('u want\n' +
                                                                     '          \':\'\'          :\n' +
                                                                     '             \\            \\\n' +
                                                                     '\n' +
-                                                                    '---------------------------\n' +
-                                                                    '\n' +
                                                                     ' sum fuk?\n' +
                                                                     '\n' +
                                                                     '          .----;;;;;;\'\'\':\n' +
@@ -82,37 +83,38 @@ bot.command('uwantsumfuk', (ctx) => ctx.reply('u want\n' +
                                                                     '      |                     |'
 ));
 bot.command('pingpong', (ctx) => ctx.reply('Q( - _-)__o__¦_____Q(-_ - )'));
-bot.command('dealwithit', (ctx) => ctx.reply('(•_•) \\n" +\n' +
-                                                                    '( •_•)>⌐■-■ \\n" +\n' +
+bot.command('dealwithit', (ctx) => ctx.reply('(•_•)\n' +
+                                                                    '( •_•)>⌐■-■\n' +
                                                                     '(⌐■_■)'
 ));
-bot.command('ahe', (ctx) => ctx.reply('\u2B07" + " ahe " + "\u2B07'));
-bot.command('ufe', (ctx) => ctx.reply('\u2B06" + " ufe " + "\u2B06'));
-bot.command('content', (ctx) => ctx.reply('<code>C O N T E N T\\n" +\n' +
-                                                                    'O O\\n" +\n' +
-                                                                    'N   N\\n" +\n' +
-                                                                    'T     T\\n" +\n' +
-                                                                    'E       E\\n" +\n' +
-                                                                    'N         N\\n" +\n' +
-                                                                    'T           T</code>'
+bot.command('ahe', (ctx) => ctx.reply('\u2B07 ahe \u2B07'));
+bot.command('ufe', (ctx) => ctx.reply('\u2B06 ufe \u2B06'));
+bot.command('content', (ctx) => ctx.reply('<code>C O N T E N T\n' +
+                                                                    'O O\n' +
+                                                                    'N   N\n' +
+                                                                    'T     T\n' +
+                                                                    'E       E\n' +
+                                                                    'N         N\n' +
+                                                                    'T           T</code>',
+                                                                 {parse_mode: 'HTML'}
 ));
-bot.command('hmmm', (ctx) => ctx.reply('hmmmm...\\n" +\n' +
-                                                                    '\\n" +\n' +
-                                                                    '             ⢀⣀⣀⣀\\n" +\n' +
-                                                                    '⠀⠀⠀⠰⡿⠿⠛⠛⠻⠿⣷\\n" +\n' +
-                                                                    '⠀⠀⠀⠀⠀⠀⣀⣄⡀⠀⠀⠀⠀⢀⣀⣀⣤⣄⣀⡀\\n" +\n' +
-                                                                    '⠀⠀⠀⠀⠀⢸⣿⣿⣷⠀⠀⠀⠀⠛⠛⣿⣿⣿⡛⠿⠷\\n" +\n' +
-                                                                    '⠀⠀⠀⠀⠀⠘⠿⠿⠋⠀⠀⠀⠀⠀⠀⣿⣿⣿⠇\\n" +\n' +
-                                                                    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀  ⠀⠀⠀⠈⠉⠁\\n" +\n' +
-                                                                    '\\n" +\n' +
-                                                                    '⠀⠀⠀⠀⣿⣷⣄⠀⢶⣶⣷⣶⣶⣤⣀\\n" +\n' +
-                                                                    '⠀⠀⠀⠀⣿⣿⣿⠀⠀⠀⠀⠀⠈⠙⠻⠗\\n" +\n' +
-                                                                    '⠀⠀⠀⣰⣿⣿⣿⠀⠀⠀⠀⢀⣀⣠⣤⣴⣶⡄\\n" +\n' +
-                                                                    '⠀⣠⣾⣿⣿⣿⣥⣶⣶⣿⣿⣿⣿⣿⠿⠿⠛⠃\\n" +\n' +
-                                                                    '⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄\\n" +\n' +
-                                                                    '⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡁\\n" +\n' +
-                                                                    '⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁\\n" +\n' +
-                                                                    '⠀⠀⠛⢿⣿⣿⣿⣿⣿⣿⡿⠟\\n" +\n' +
+bot.command('hmmm', (ctx) => ctx.reply('hmmmm...\n' +
+                                                                    '\n' +
+                                                                    '             ⢀⣀⣀⣀\n' +
+                                                                    '⠀⠀⠀⠰⡿⠿⠛⠛⠻⠿⣷\n' +
+                                                                    '⠀⠀⠀⠀⠀⠀⣀⣄⡀⠀⠀⠀⠀⢀⣀⣀⣤⣄⣀⡀\n' +
+                                                                    '⠀⠀⠀⠀⠀⢸⣿⣿⣷⠀⠀⠀⠀⠛⠛⣿⣿⣿⡛⠿⠷\n' +
+                                                                    '⠀⠀⠀⠀⠀⠘⠿⠿⠋⠀⠀⠀⠀⠀⠀⣿⣿⣿⠇\n' +
+                                                                    '⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀  ⠀⠀⠀⠈⠉⠁\n' +
+                                                                    '\n' +
+                                                                    '⠀⠀⠀⠀⣿⣷⣄⠀⢶⣶⣷⣶⣶⣤⣀\n' +
+                                                                    '⠀⠀⠀⠀⣿⣿⣿⠀⠀⠀⠀⠀⠈⠙⠻⠗\n' +
+                                                                    '⠀⠀⠀⣰⣿⣿⣿⠀⠀⠀⠀⢀⣀⣠⣤⣴⣶⡄\n' +
+                                                                    '⠀⣠⣾⣿⣿⣿⣥⣶⣶⣿⣿⣿⣿⣿⠿⠿⠛⠃\n' +
+                                                                    '⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄\n' +
+                                                                    '⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡁\n' +
+                                                                    '⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁\n' +
+                                                                    '⠀⠀⠛⢿⣿⣿⣿⣿⣿⣿⡿⠟\n' +
                                                                     '⠀⠀⠀⠀⠀⠉⠉⠉'
 ));
 bot.command('letitsnow', (ctx) => ctx.reply('･ ｡\n' +
@@ -184,18 +186,36 @@ bot.command('binarize', (ctx) => {
 });
 bot.command('takedis', (ctx) => ctx.reply('༼ つ ◕_◕ ༽つ ' + ctx.state.args.toString().replace(new RegExp(',', 'g'), ' ')));
 
-bot.command('seppuku', async(ctx) => timeOut(ctx, ctx.from.id, 1500));
-bot.command('timeout', async(ctx) => {
+bot.command('seppuku', async (ctx) => timeOut(ctx, ctx.from.id, 1500));
+bot.command('timeout', async (ctx) => {
     let user = ctx.state.args[0];
     let time = ctx.state.args[1] * 60000;
     timeOut(ctx, user, time);
 });
 bot.command('timeoutbeni', async (ctx) => timeOut(ctx, 129383764, 60000));
-bot.command('test', async(ctx) => console.log(ctx.restrictChatMember(ctx.chat.id, ctx.from.id)));
+
+bot.command('showusers', async (ctx) => {
+    let table = '';
+
+    (await db.find()).forEach(user => {
+        table += `${user.id}  ${user.userName}  ${user.firstName}  ${user.lastName}\n`;
+    });
+
+    ctx.reply(table);
+});
+bot.command('everyone', async (ctx) => {
+    let reply = '';
+
+    for (const user of (await db.find())) {
+        reply += '@' + ((await ctx.getChatMember(user.id)).user.username) + '\n';
+    }
+
+    await ctx.reply(reply);
+});
 
 bot.launch();
 
-var timeout = (ms) =>new Promise(resolve => setTimeout(resolve, ms));
+var wait = (ms) =>new Promise(resolve => setTimeout(resolve, ms));
 
 var timeOut = async (ctx, user, time) => {
     let reset = {
@@ -209,6 +229,6 @@ var timeOut = async (ctx, user, time) => {
         can_pin_messages: true
     };
     ctx.reply((await ctx.restrictChatMember(user).catch(reason => reason.description)) === 'Bad Request: can\'t remove chat owner' ? 'Can\'t time an admin out' : 'Successfully timed out');
-    await timeout(time);
+    await wait(time);
     await ctx.restrictChatMember(user, reset).catch(reason => '');
 }

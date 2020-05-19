@@ -1,0 +1,2 @@
+docker build -t boti .
+docker run -d --name bot boti

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Mongo = require('mongodb').MongoClient;
 const url = process.env.URL + ':' + process.env.PORT;
 const client = new Mongo(url,  {useUnifiedTopology: true});

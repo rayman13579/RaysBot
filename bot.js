@@ -4,6 +4,8 @@ const db = require('./db.js');
 
 const bot = new Telegraf(process.env.TOKEN);
 
+db.connect();
+
 bot.use(async (ctx, next) => {
     let start = new Date();
     await next();
@@ -12,20 +14,19 @@ bot.use(async (ctx, next) => {
     console.log('%s > %s < %sms', niceDate, ctx.message.text, ms);
 });
 
-bot.use((ctx, next) => {
+bot.use(async (ctx, next) => {
     if (ctx.updateType === 'message' && ctx.updateSubTypes.includes('text')) {
         let args = [];
         args = ctx.message.text.split(' ');
         args.shift();
         ctx.state.args = args;
     }
-    next();
+    await next();
 });
 
 bot.use(async (ctx, next) => {
-    await db.connect();
     await db.insert(ctx.from.id, ctx.from.username, ctx.from.first_name, ctx.from.last_name);
-    next();
+    await next();
 });
 
 bot.start((ctx) => ctx.reply('Yo \\o/ \n check out /help'));
